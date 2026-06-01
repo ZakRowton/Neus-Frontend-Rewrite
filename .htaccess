@@ -1,0 +1,34 @@
+# NEUS Frontend Rewrite - Apache URL Rewriting
+# Routes all requests to index.php for SPA-style routing
+
+RewriteEngine On
+RewriteBase /
+
+# Allow direct access to assets
+RewriteRule ^assets/ - [L]
+RewriteRule ^api/ - [L]
+RewriteRule ^uploads/ - [L]
+
+# Allow direct file access for existing files
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Allow direct directory access
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Route everything else to index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy strict-origin-when-cross-origin
+</IfModule>
+
+# PHP settings
+php_value upload_max_filesize 50M
+php_value post_max_size 50M
+php_value max_execution_time 300
